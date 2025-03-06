@@ -1,0 +1,97 @@
+﻿@model AccountDetailViewModel
+
+@{
+    ViewData["Title"] = "AccountDetail";
+}
+
+<div class="row">
+
+    <div class="col-md-12 mb-2 mt-5">
+
+        <h1>Account details</h1>
+        <div>
+            <a asp-controller="Home" asp-action="Index">Back to account summary</a>
+        </div>
+        <div>
+            <hr />
+            <dl class="row">
+                <dt class = "col-sm-2">
+                    Balance
+                </dt>
+                <dd class = "col-sm-10">
+                    @Model.Account.Balance.ToString("C")
+                </dd>
+                <dt class = "col-sm-2">
+                    Account type
+                </dt>
+                <dd class = "col-sm-10">
+                    @Html.DisplayFor(model => model.Account.AccountType.Name)
+                </dd>
+                <dt class = "col-sm-2">
+                    Account number
+                </dt>
+                <dd class = "col-sm-10">
+                    @Html.DisplayFor(model => model.Account.AccountNumber)
+                </dd>
+                <dt class = "col-sm-2">
+                    Account created
+                </dt>
+                <dd class = "col-sm-10">
+                    @Model.Account.CreatedDate.ToShortDateString()
+                </dd>
+                <dt class="col-sm-2">
+                    Last activity
+                </dt>
+                <dd class="col-sm-10">
+                    @Model.Account.ModifiedDate.ToShortDateString()
+                </dd>
+            </dl>
+        </div>
+
+    </div>
+</div>
+
+<p>
+    <a id="toggleLink" data-bs-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
+        Move money
+    </a>
+</p>
+<div class="collapse" id="collapseExample">
+    <div class="card card-body">
+        <form method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="mb-3">
+                <label for="targetAccount" class="form-label">Target Account</label>
+                <select id="targetAccount" class="form-select" asp-for="MoneyTransfer.TargetAccount" asp-items="@(new SelectList(Model.AvailableAccounts, "AccountId", "AccountType.Name"))"></select>
+            </div>
+            <div class="mb-3">
+                <label for="amount" class="form-label">Amount</label>
+                <input type="number" id="amount" class="form-control" asp-for="MoneyTransfer.Amount" max="@Model.MaxTransferAmount" min="1" />
+                <span class="form-text">Maximum transfer amount: @Model.MaxTransferAmount.ToString("C")<br/></span>
+                <span asp-validation-for="MoneyTransfer.Amount" class="text-danger"></span>
+            </div>
+            <input type="hidden" asp-for="MoneyTransfer.SourceAccount" />
+            <button type="submit" class="btn btn-primary">Transfer</button>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var toggleLink = document.getElementById('toggleLink');
+            var collapseExample = document.getElementById('collapseExample');
+
+            collapseExample.addEventListener('show.bs.collapse', function () {
+                toggleLink.textContent = 'Cancel move money';
+            });
+
+            collapseExample.addEventListener('hide.bs.collapse', function () {
+                toggleLink.textContent = 'Move money';
+            });
+        });
+    </script>
+}

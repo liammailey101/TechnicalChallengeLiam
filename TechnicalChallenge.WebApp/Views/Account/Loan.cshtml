@@ -1,0 +1,82 @@
+﻿@model TechnicalChallenge.WebApp.Models.LoanViewModel
+
+@{
+    ViewData["Title"] = "Loan";
+}
+
+<h1>Loan</h1>
+
+@if (Model.IsLoanRequested == false)
+{
+    <h4>Loan Application</h4>
+}
+else
+{
+    if (Model.IsLoanApproved == true)
+    {
+        <h4>Your loan application has been approved</h4>
+        <div class="alert alert-info">
+            <p>We are pleased to offer you a loan of @Model.LoanAmount.GetValueOrDefault().ToString("C") at @Model.LoanRate% over @Model.SelectedDuration @(Model.SelectedDuration > 1 ? "years" : "year").</p>
+            <p>To accept this loan click 'Proceed with loan'.</p>
+        </div>
+    }
+    else
+    {
+        <h4>Your loan application has not been approved</h4>
+        <div class="alert alert-warning">
+            <p>We are unable to offer you a loan at this time</p>
+        </div>
+    }
+}
+
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Loan">
+            @if (Model.IsLoanRequested == false)
+            {
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                <div class="form-group mt-3">
+                    <label asp-for="LoanAmount" class="control-label"></label>
+                    <input type="number" id="LoanAmount" class="form-control" asp-for="LoanAmount" max="1000000" min="100" />
+                    <span class="form-text">Maximum amount: £1,000,000 - Minimum amount: £100<br/></span>
+                    <span asp-validation-for="LoanAmount" class="text-danger"></span>
+                </div>
+                <div class="form-group mt-3">
+                    <label asp-for="SelectedDuration" class="control-label"></label>
+                    <select asp-for="SelectedDuration" class="form-control" asp-items="@(new SelectList(Model.LoanDurations))" readonly="@(Model.IsLoanRequested ? "readonly" : "")"></select>
+                    <span asp-validation-for="SelectedDuration" class="text-danger"></span>
+                </div>
+                <div class="form-group mt-3 mb-5">
+                    <label asp-for="SelectedAccountId" class="control-label"></label>
+                <select asp-for="SelectedAccountId" class="form-control" asp-items="@(new SelectList(Model.Accounts, "AccountId", "AccountType.Name"))" readonly="@(Model.IsLoanRequested ? "readonly" : "")"></select>
+                <span asp-validation-for="SelectedAccountId" class="text-danger"></span>
+            </div>
+            }
+            <input type="hidden" asp-for="IsLoanRequested" />
+            
+                <div class="form-group">
+                    <a class="btn btn-sm btn-secondary" asp-controller="Home" asp-action="Index">Cancel</a>
+                    @if (Model.IsLoanRequested == false)
+                    {
+                    <input type="submit" value="Get quote" class="btn btn-sm btn-primary" />
+                    }
+                    else if (Model.IsLoanApproved == true)
+                    {
+                        <input type="hidden" asp-for="SelectedAccountId" />
+                        <input type="hidden" asp-for="SelectedDuration" />
+                        <input type="hidden" asp-for="LoanAmount" />
+                        <input type="hidden" asp-for="IsLoanApproved" />
+                    <input type="submit" value="Proceed with loan" class="btn btn-sm btn-success" />
+                    }
+                </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
