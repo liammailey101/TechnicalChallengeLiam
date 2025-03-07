@@ -173,5 +173,45 @@ namespace TechnicalChallenge.Common
         /// Represents a null value error.
         /// </summary>
         public static ResultError NullValue = new("Error.NullValue", "A null value was provided.");
+
+        /// <summary>
+        /// Represents an invalid account error.
+        /// </summary>
+        public static ResultError InvalidAccount = new("Error.InvalidAccount", "Customer does not have this account.");
+
+        /// <summary>
+        /// Represents a bad rating error.
+        /// </summary>
+        public static ResultError BadRating = new("Error.BadRating", "Customer does not have adequate credit rating.");
+
+        /// <summary>
+        /// Represents a generic error for getting loan durations.
+        /// </summary>
+        public static ResultError GetLoanDurations = new("Error.GetLoanDurations", "An error occurred while getting loan durations.");
+
+        /// <summary>
+        /// Represents a generic error for getting loan rates.
+        /// </summary>
+        public static ResultError GetLoanRate = new("Error.GetLoanRate", "An error occurred while getting loan rate.");
+
+        /// <summary>
+        /// Represents a generic error for processing loans.
+        /// </summary>
+        public static ResultError ProcessLoan = new("Error.ProcessLoan", "An error occurred while processing loan.");
+
+        /// <summary>
+        /// Represents a generic error for getting customer by name.
+        /// </summary>
+        public static ResultError GetByName = new("Error.GetByName", "An error occurred while getting customer by name.");
+
+        /// <summary>
+        /// Represents a generic error for getting accounts.
+        /// </summary>
+        public static ResultError GetAccounts = new("Error.GetAccounts", "An error occurred while getting accounts for customer.");
+
+        /// <summary>
+        /// Represents a generic error for transferring funds.
+        /// </summary>
+        public static ResultError TransferFunds = new("Error.TransferFunds", "An error occurred while transferring funds.");
     }
 }

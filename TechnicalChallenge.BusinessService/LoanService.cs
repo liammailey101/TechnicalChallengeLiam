@@ -33,18 +33,6 @@ namespace TechnicalChallenge.BusinessService
         /// Gets the available loan durations.
         /// </summary>
         /// <returns>A result containing a list of unique loan durations.</returns>
-        /// <example>
-        /// var result = await loanService.GetLoanDurations();
-        /// if (result.IsSuccess)
-        /// {
-        ///     var durations = result.Value;
-        ///     // Use the durations
-        /// }
-        /// else
-        /// {
-        ///     // Handle the error
-        /// }
-        /// </example>
         public async Task<Result<List<byte>>> GetLoanDurations()
         {
             try
@@ -68,7 +56,7 @@ namespace TechnicalChallenge.BusinessService
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred while getting loan durations");
-                return Result.Failure<List<byte>>(new ResultError("Error.GetLoanDurations", "An error occurred while getting loan durations"));
+                return Result.Failure<List<byte>>(ResultError.GetLoanDurations);
             }
         }
 
@@ -78,18 +66,6 @@ namespace TechnicalChallenge.BusinessService
         /// <param name="customerId">The customer identifier.</param>
         /// <param name="duration">The loan duration.</param>
         /// <returns>A result containing the loan rate for the specified customer and duration.</returns>
-        /// <example>
-        /// var result = await loanService.GetLoanRate(customerId, duration);
-        /// if (result.IsSuccess)
-        /// {
-        ///     var loanRate = result.Value;
-        ///     // Use the loan rate
-        /// }
-        /// else
-        /// {
-        ///     // Handle the error
-        /// }
-        /// </example>
         public async Task<Result<LoanRateDto>> GetLoanRate(Guid customerId, int duration)
         {
             try
@@ -124,7 +100,7 @@ namespace TechnicalChallenge.BusinessService
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred while getting loan rate for customer {CustomerId} and duration {Duration}", customerId, duration);
-                return Result.Failure<LoanRateDto>(new ResultError("Error.GetLoanRate", "An error occurred while getting loan rate"));
+                return Result.Failure<LoanRateDto>(ResultError.GetLoanRate);
             }
         }
 
@@ -136,17 +112,6 @@ namespace TechnicalChallenge.BusinessService
         /// <param name="duration">The loan duration.</param>
         /// <param name="targetAccount">The target account identifier.</param>
         /// <returns>A result indicating the success or failure of the operation.</returns>
-        /// <example>
-        /// var result = await loanService.ProcessLoan(amount, customerId, duration, targetAccount);
-        /// if (result.IsSuccess)
-        /// {
-        ///     // Loan processed successfully
-        /// }
-        /// else
-        /// {
-        ///     // Handle the error
-        /// }
-        /// </example>
         public async Task<Result> ProcessLoan(decimal amount, Guid customerId, int duration, Guid targetAccount)
         {
             try
@@ -163,7 +128,7 @@ namespace TechnicalChallenge.BusinessService
                 if (customer == null || account == null || account.CustomerId != customer.Id)
                 {
                     _logger.LogWarning("Invalid account for customer {CustomerId}", customerId);
-                    return Result.Failure(new ResultError("InvalidAccount", "Customer does not have this account"));
+                    return Result.Failure(ResultError.InvalidAccount);
                 }
 
                 var rate = await loanRateRepo.FirstAsync(r => r.Duration == duration &&
@@ -172,7 +137,7 @@ namespace TechnicalChallenge.BusinessService
                 if (rate == null)
                 {
                     _logger.LogWarning("Customer {CustomerId} does not have adequate credit rating for duration {Duration}", customerId, duration);
-                    return Result.Failure(new ResultError("BadRating", "Customer does not have adequate credit rating"));
+                    return Result.Failure(ResultError.BadRating);
                 }
 
                 var loanAccount = new Account
@@ -195,7 +160,7 @@ namespace TechnicalChallenge.BusinessService
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred while processing loan for customer {CustomerId} with amount {Amount} and duration {Duration}", customerId, amount, duration);
-                return Result.Failure(new ResultError("Error.ProcessLoan", "An error occurred while processing loan"));
+                return Result.Failure(ResultError.ProcessLoan);
             }
         }
 
@@ -203,10 +168,6 @@ namespace TechnicalChallenge.BusinessService
         /// Generates a random account number.
         /// </summary>
         /// <returns>A randomly generated account number.</returns>
-        /// <example>
-        /// var accountNumber = GenerateAccountNumber();
-        /// // Use the account number
-        /// </example>
         private string GenerateAccountNumber()
         {
             _logger.LogInformation("Generating account number");

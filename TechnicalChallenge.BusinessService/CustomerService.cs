@@ -35,18 +35,6 @@ namespace TechnicalChallenge.BusinessService
         /// </summary>
         /// <param name="name">The name of the customer.</param>
         /// <returns>A result containing the customer details.</returns>
-        /// <example>
-        /// var result = await customerService.GetByNameAsync("John Doe");
-        /// if (result.IsSuccess)
-        /// {
-        ///     var customer = result.Value;
-        ///     // Use the customer details
-        /// }
-        /// else
-        /// {
-        ///     // Handle the error
-        /// }
-        /// </example>
         public async Task<Result<CustomerDto>> GetByNameAsync(string name)
         {
             try
@@ -70,7 +58,7 @@ namespace TechnicalChallenge.BusinessService
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred while getting customer by name: {Name}", name);
-                return Result.Failure<CustomerDto>(new ResultError("Error.GetByName", "An error occurred while getting customer by name"));
+                return Result.Failure<CustomerDto>(ResultError.GetByName);
             }
         }
 
@@ -79,18 +67,6 @@ namespace TechnicalChallenge.BusinessService
         /// </summary>
         /// <param name="customerNumber">The customer identifier.</param>
         /// <returns>A result containing a list of accounts for the specified customer.</returns>
-        /// <example>
-        /// var result = await customerService.GetAccountsAsync(customerNumber);
-        /// if (result.IsSuccess)
-        /// {
-        ///     var accounts = result.Value;
-        ///     // Use the accounts
-        /// }
-        /// else
-        /// {
-        ///     // Handle the error
-        /// }
-        /// </example>
         public async Task<Result<List<AccountDto>>> GetAccountsAsync(Guid customerNumber)
         {
             try
@@ -114,7 +90,7 @@ namespace TechnicalChallenge.BusinessService
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred while getting accounts for customer number: {CustomerNumber}", customerNumber);
-                return Result.Failure<List<AccountDto>>(new ResultError("Error.GetAccounts", "An error occurred while getting accounts for customer"));
+                return Result.Failure<List<AccountDto>>(ResultError.GetAccounts);
             }
         }
 
@@ -125,18 +101,6 @@ namespace TechnicalChallenge.BusinessService
         /// <param name="targetAccountId">The target account identifier.</param>
         /// <param name="amount">The amount to transfer.</param>
         /// <returns>A result indicating the success or failure of the operation, including the balances of the source and target accounts.</returns>
-        /// <example>
-        /// var result = await customerService.TransferFunds(sourceAccountId, targetAccountId, 100.00m);
-        /// if (result.IsSuccess)
-        /// {
-        ///     var balances = result.Value;
-        ///     // Use the balances
-        /// }
-        /// else
-        /// {
-        ///     // Handle the error
-        /// }
-        /// </example>
         public async Task<Result<(decimal SourceAccountBalance, decimal TargetAccountBalance)>> TransferFunds(Guid sourceAccountId, Guid targetAccountId, decimal amount)
         {
             try
@@ -151,7 +115,7 @@ namespace TechnicalChallenge.BusinessService
                 if (sourceAccount == null || targetAccount == null)
                 {
                     _logger.LogWarning("Source or target account not found for transfer");
-                    return Result.Failure<(decimal, decimal)>(new ResultError("AccountNotFound", "Source or target account not found"));
+                    return Result.Failure<(decimal, decimal)>(ResultError.InvalidAccount);
                 }
 
                 sourceAccount.Balance -= amount;
@@ -165,7 +129,7 @@ namespace TechnicalChallenge.BusinessService
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred while transferring {Amount} from account {SourceAccountId} to account {TargetAccountId}", amount, sourceAccountId, targetAccountId);
-                return Result.Failure<(decimal, decimal)>(new ResultError("Error.TransferFunds", "An error occurred while transferring funds"));
+                return Result.Failure<(decimal, decimal)>(ResultError.TransferFunds);
             }
         }
     }
